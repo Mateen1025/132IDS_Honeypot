@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CanaryDown Password Test</title>
+</head>
+<body>
+    <h1>Protected Page</h1>
+    <p>This page is protected by a very simple password check.</p>
+    <button onclick="checkPassword()">Enter Protected Area</button>
+
+    <script>
+        // Manual password check (uses prompt)
+        function checkPassword() {
+            var password = prompt("Please enter the password:");
+
+            if (password === "secret123") {
+                logAttempt(password, true);
+                document.body.innerHTML = "<h1>✅ Access Granted!</h1><p>Welcome to the protected content.</p>";
+            } else {
+                logAttempt(password, false);
+                alert("❌ Incorrect password. Please try again.");
+            }
+        }
+
+        // Function to log attempts to logger.php
+        function logAttempt(password, success) {
+            fetch('https://canarydown.com/logger.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password: password, success: success })
+            })
+            .then(res => res.text())
+            .then(response => console.log('Server log response:', response))
+            .catch(err => console.error('Error logging attempt:', err));
+        }
+
+        // Hidden brute-force script (runs only when you call bruteForce() in console)
+        (function() {
+            const passwords = ['123456', 'password', 'letmein', 'admin', 'secret123', 'qwerty'];
+            let index = 0;
+
+            window.bruteForce = function() {
+                if (index >= passwords.length) {
+                    console.log('❌ Failed to find password.');
+                    return;
+                }
+
+                let guess = passwords[index];
+                console.log(`🔍 Trying: ${guess}`);
+                logAttempt(guess, guess === 'secret123');
+
+               if (guess === 'secret123') {
+    logAttempt(guess, true);
+    document.body.innerHTML = `<h1>✅ SUCCESS! Password is: ${guess}</h1>`;
+} else {
+    logAttempt(guess, false);
+}
+
+            };
+        })();
+    </script>
+
+    <p><em>To run the brute-force test, open your browser console and type:</em> <code>bruteForce()</code></p>
+</body>
+</html>
